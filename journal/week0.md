@@ -3,6 +3,15 @@
 ## Required Homework
 
 
+### Conceptual Architecture
+![CleanShot 2023-02-17 at 13 34 09](https://user-images.githubusercontent.com/10653195/219654830-d69813b6-9d23-4e06-be46-04a347b3a874.png)
+[LucidChart Share Link](https://lucid.app/lucidchart/04a5dae9-4bfc-4851-8780-ab212948116d/edit?viewport_loc=-131%2C-1699%2C1767%2C1235%2C0_0&invitationId=inv_cecd9fb4-2542-429f-b0b4-866a385eba80)
+
+### Logical Architecture
+![CleanShot 2023-02-17 at 13 35 25](https://user-images.githubusercontent.com/10653195/219655082-3bbc7e90-b013-4a11-b42a-b678e51a2d70.png)
+[LucidChart Share Link](https://lucid.app/lucidchart/04a5dae9-4bfc-4851-8780-ab212948116d/edit?viewport_loc=-372%2C154%2C2179%2C1523%2COY0xUC5yknQd&invitationId=inv_cecd9fb4-2542-429f-b0b4-866a385eba80)
+
+
 ### Create an Admin User with MFA enabled
 <img width="916" alt="CleanShot 2023-02-17 at 11 36 03@2x" src="https://user-images.githubusercontent.com/10653195/219653285-443036d9-36e9-4697-9eab-068a6c409cda.png">
 ### Use CloudShell
