@@ -40,3 +40,10 @@
 ![CleanShot 2023-02-17 at 12 16 52](https://user-images.githubusercontent.com/10653195/219650687-d2d660f3-a485-49a9-8c9d-88028caf99ab.png)
 <img width="928" alt="CleanShot 2023-02-17 at 12 59 16@2x" src="https://user-images.githubusercontent.com/10653195/219650727-5ece026a-0b4f-4102-ae13-411cdb827f77.png">
 
+## Homework Challenge
+
+### MFA on Admin Account
+MFA enabled on the admin account and integrate with 1Password, the password manager I use. This makes using MFA nearly painless as it auto-populates the one-time numeric code into the field when logging in.
+
+![CleanShot 2023-02-17 at 13 48 29](https://user-images.githubusercontent.com/10653195/219657499-2d5447a4-03f2-405a-8a38-206b3bbc9b4f.png)
+
