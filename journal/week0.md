@@ -4,7 +4,7 @@
 
 
 ### Create an Admin User with MFA enabled
-	<img width="916" alt="CleanShot 2023-02-17 at 11 36 03@2x" src="https://user-images.githubusercontent.com/10653195/219650112-5af8f805-ce0b-41b7-9933-45559ae08ebe.png">
+	![admin user](assets/CleanShot 2023-02-17 at 11.36.03@2x.png)
 ### Use CloudShell
 	![CleanShot 2023-02-17 at 11 42 51](https://user-images.githubusercontent.com/10653195/219650160-66bb6083-47bd-4608-8a04-85c66224051d.png)
 ### Generate AWS Credentials
