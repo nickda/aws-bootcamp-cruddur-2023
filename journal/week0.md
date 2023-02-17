@@ -14,6 +14,7 @@
 
 ### Create an Admin User with MFA enabled
 <img width="916" alt="CleanShot 2023-02-17 at 11 36 03@2x" src="https://user-images.githubusercontent.com/10653195/219653285-443036d9-36e9-4697-9eab-068a6c409cda.png">
+
 ### Use CloudShell
 ![CleanShot 2023-02-17 at 11 42 51](https://user-images.githubusercontent.com/10653195/219650160-66bb6083-47bd-4608-8a04-85c66224051d.png)
 
