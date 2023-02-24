@@ -293,3 +293,55 @@ REPOSITORY      TAG       IMAGE ID       CREATED          SIZE
 backend-flask   latest    5f1e02872672   33 seconds ago   122MB <--- Yay! We saved Gitpod 7MB of storage
 ```
 
+### Implementing the healthcheck in docker-compose
+#### Adding a healthcheck to docker-compose.yml
+```yml
+services:
+  backend-flask:
+    environment:
+      FRONTEND_URL: "https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+      BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+    build: ./backend-flask
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./backend-flask:/backend-flask
+# Healtcheck code begins here      
+    healthcheck:
+      test: curl --fail https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/api/activities/home
+      interval: 30s
+      timeout: 10s
+      retries: 3
+```
+
+>I struggled a little bit with forming the URL correctly. e.g., when the URL had a trailing slash like this: `https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/api/activities/home/`, the healthcheck would fail.
+
+>Additionally, if using curl for healthcheck it needs to be installed into the controller. Hence, the Dockerfile update:
+```dockerfile
+RUN apt-get update 
+RUN apt-get install -y gcc
+RUN apt-get install -y curl
+```
+
+##### Verification
+Pay attention to the STATUS column in the table:
+```
+CONTAINER ID   IMAGE                                         COMMAND                  CREATED              STATUS                    PORTS                                       NAMES
+1249cea05406   aws-bootcamp-cruddur-2023-frontend-react-js   "docker-entrypoint.s…"   32 seconds ago       Up 31 seconds             0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   aws-bootcamp-cruddur-2023-frontend-react-js-1
+1501d438d5c0   aws-bootcamp-cruddur-2023-backend-flask       "python3 -m flask ru…"   33 seconds ago       Up 31 seconds (healthy)   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   aws-bootcamp-cruddur-2023-backend-flask-1
+bb6bb619e3be   postgres:13-alpine                            "docker-entrypoint.s…"   About a minute ago   Up About a minute         0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   aws-bootcamp-cruddur-2023-db-1
+771a0fb469fe   amazon/dynamodb-local:latest                  "java -jar DynamoDBL…"   About a minute ago   Up About a minute         0.0.0.0:8000->8000/tcp, :::8000->8000/tcp   dynamodb-local
+```
+
+If the healthcheck didn't pass it shows up as (unhealthy) in `docker ps`:
+```
+CONTAINER ID   IMAGE                                         COMMAND                  CREATED              STATUS                          PORTS                                       NAMES
+d9526a8c74c9   aws-bootcamp-cruddur-2023-backend-flask       "python3 -m flask ru…"   About a minute ago   Up About a minute (unhealthy)   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   aws-bootcamp-cruddur-2023-backend-flask-1
+```
+Also, the exclamation mark appears in the Docker extension for VSC:
+
+![CleanShot 2023-02-24 at 13 44 26](https://user-images.githubusercontent.com/10653195/221182061-069ceb84-950f-4a07-9369-de1ac91c31f8.png)
+
+
+
+
