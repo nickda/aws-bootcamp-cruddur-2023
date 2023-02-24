@@ -316,7 +316,7 @@ services:
 
 >I struggled a little bit with forming the URL correctly. e.g., when the URL had a trailing slash like this: `https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/api/activities/home/`, the healthcheck would fail.
 
->Additionally, if using curl for healthcheck it needs to be installed into the controller. Hence, the Dockerfile update:
+>Additionally, if using curl for healthcheck it needs to be installed into the container. Hence, the Dockerfile update:
 ```dockerfile
 RUN apt-get update 
 RUN apt-get install -y gcc
