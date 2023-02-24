@@ -295,6 +295,8 @@ backend-flask   latest    5f1e02872672   33 seconds ago   122MB <--- Yay! We sav
 
 ### Implementing the healthcheck in docker-compose
 #### Adding a healthcheck to docker-compose.yml
+
+[link to commit](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/d81f8104841d1fe7107fc6eddb6e2ef153c6f259)
 ```yml
 services:
   backend-flask:
