@@ -1,7 +1,5 @@
 # Week 1 — App Containerization
 
-Installed Docker for VSCode
-
 ## Difference between RUN and CMD
 `RUN` is a command we run to create a layer in the image / `CMD` is a command that the container is going to run when it starts up
 
