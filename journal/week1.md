@@ -185,3 +185,109 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl https://4567-nickda-aw
         "created_at": "2023-02-22T09:32:27.981983+00:00",
 ... edited for brevity
 ```
+
+### Pushing and tagging image to Docker Hub
+#### 1. Log in to Docker Hub
+```sh
+docker login
+```
+##### Log
+```
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: *REDACTED*
+Password: *REDACTED*
+WARNING! Your password will be stored unencrypted in /home/gitpod/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+```
+**WARNING! Your password will be stored unencrypted in /home/gitpod/.docker/config.json.** this looks like a potential problem. Remember to do `docker logout` in the end to remove the credentials from the `config.json`
+
+#### 2. Tag the image
+```sh
+docker tag backend-flask nickda/cruddur-backend-flask:1.0
+```
+
+#### 3. Push the image to Docker Hub
+```sh
+docker push nickda/cruddur-backend-flask:1.0
+```
+##### Log
+```
+he push refers to repository [docker.io/nickda/cruddur-backend-flask]
+0228ec85ec2a: Pushed 
+97f998ea0f33: Pushed 
+cb35014d1c7c: Pushed 
+9aa90f80bdc0: Pushed 
+5e8ed28e644d: Pushed 
+66a7b77b1ced: Pushed 
+223e3b83550e: Pushed 
+53b2529dfca9: Mounted from library/python 
+5be8f6899d42: Pushed 
+8d60832b730a: Pushed 
+63b3cf45ece8: Pushed 
+1.0: digest: sha256:3750d50af5abd8f633f5219e0dd7df7a83efa557452b08d6f70a3c88f1688bbd size: 2617
+```
+
+#### 4. Verify in GUI that the image was indeed pushed
+![CleanShot 2023-02-24 at 11 07 00](https://user-images.githubusercontent.com/10653195/221151371-65f9031e-5ce7-41ce-bf60-aa90c86bd061.png)
+
+
+#### 5. Deleting the Docker Hub credentials from the ~/.docker/config.json
+```sh
+docker logout
+```
+##### Log
+```
+Removing login credentials for https://index.docker.io/v1/
+```
+
+### Multi-stage Build
+MSB has the potential of making our container images smaller.
+To determine whether that is the case let's check the size of our non-multi-stage container:
+
+```sh
+docker images backend-flask:latest
+REPOSITORY      TAG       IMAGE ID       CREATED         SIZE
+backend-flask   latest    55a3ed61463a   9 minutes ago   129MB <--- image size is here
+```
+#### Stage 1 - Building the application
+In the first stage, the application is built by installing the required Python packages specified in requirements.txt. The --user flag is used to install packages in the local user's home directory instead of the system directory, and the --no-cache-dir flag is used to avoid caching the installed packages, which helps to reduce the final image size.
+
+```dockerfile
+FROM python:3.10-slim-buster AS builder
+
+WORKDIR /backend-flask
+
+COPY requirements.txt requirements.txt
+RUN pip3 install --user --no-cache-dir -r requirements.txt
+
+COPY . .
+```
+#### Stage 2 - Running the application
+In the second stage, the built application is copied from the first stage using the --from=builder flag, along with the Python packages installed in the first stage. The PATH environment variable is set to include the local user's home directory, so that the installed packages can be found when the application is run.
+
+```dockerfile
+FROM python:3.10-slim-buster
+
+WORKDIR /backend-flask
+
+COPY --from=builder /root/.local /root/.local
+ENV PATH=/root/.local/bin:$PATH
+
+COPY run_flask.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/run_flask.sh
+
+ENV FLASK_ENV=development
+
+EXPOSE ${PORT}
+
+CMD [ "/usr/local/bin/run_flask.sh"]
+```
+
+#### After building the image we check the size again
+```sh
+docker images backend-flask:latest
+REPOSITORY      TAG       IMAGE ID       CREATED          SIZE
+backend-flask   latest    5f1e02872672   33 seconds ago   122MB <--- Yay! We saved Gitpod 7MB of storage
+```
+
