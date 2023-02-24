@@ -92,6 +92,7 @@ Used the "Other Explorer" installed in VSC to connect to Postgres:
 ![CleanShot 2023-02-24 at 08 50 14](https://user-images.githubusercontent.com/10653195/221122516-48edec2c-30d5-4e6a-b951-93cedf675493.png)
 
 Can see the standard tables:
+
 ![CleanShot 2023-02-24 at 08 52 29](https://user-images.githubusercontent.com/10653195/221122842-8f5c152e-1141-48e8-9579-64c00f5a9a40.png)
 
 Tried connecting via CLI client:
