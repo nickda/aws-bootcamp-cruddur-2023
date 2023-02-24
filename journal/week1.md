@@ -1,5 +1,6 @@
 # Week 1 — App Containerization
 
+  - [Primary Homework](#week-1---app-containerization)
     + [Difference between RUN and CMD](#difference-between-run-and-cmd)
     + [Containerize Backend and Frontend](#containerize-backend-and-frontend)
       - [Checked that the python works independent of Docker](#checked-that-the-python-works-independent-of-docker)
@@ -33,6 +34,7 @@
     + [Implementing the healthcheck in docker-compose](#implementing-the-healthcheck-in-docker-compose)
       - [Adding a healthcheck to docker-compose.yml](#adding-a-healthcheck-to-docker-composeyml)
         * [Verification](#verification)
+
 
 
 ### Difference between RUN and CMD
