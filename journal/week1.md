@@ -1,5 +1,40 @@
 # Week 1 — App Containerization
 
+    + [Difference between RUN and CMD](#difference-between-run-and-cmd)
+    + [Containerize Backend and Frontend](#containerize-backend-and-frontend)
+      - [Checked that the python works independent of Docker](#checked-that-the-python-works-independent-of-docker)
+      - [Docker Config](#docker-config)
+      - [Tried building the container](#tried-building-the-container)
+      - [Tried Running the Container](#tried-running-the-container)
+      - [Get Container Images or Running Container Ids](#get-container-images-or-running-container-ids)
+      - [Checked Container Logs](#checked-container-logs)
+      - [Tried attaching shell to a Container](#tried-attaching-shell-to-a-container)
+      - [Added "npm install" to gitpod.yml to avoid running it manually](#added--npm-install--to-gitpodyml-to-avoid-running-it-manually)
+      - [Three ways of running Docker compose](#three-ways-of-running-docker-compose)
+    + [Updating the OpenAPI definitions](#updating-the-openapi-definitions)
+    + [Updating the backend and frontend code to add notifications functionality](#updating-the-backend-and-frontend-code-to-add-notifications-functionality)
+    + [DynamoDB Local and PostgreSQL](#dynamodb-local-and-postgresql)
+  * [Homework Challenges](#homework-challenges)
+    + [Run the Dockerfile CMD as an external script](#run-the-dockerfile-cmd-as-an-external-script)
+      - [Log](#log)
+    + [Pushing and tagging image to Docker Hub](#pushing-and-tagging-image-to-docker-hub)
+      - [1. Log in to Docker Hub](#1-log-in-to-docker-hub)
+        * [Log](#log-1)
+      - [2. Tag the image](#2-tag-the-image)
+      - [3. Push the image to Docker Hub](#3-push-the-image-to-docker-hub)
+        * [Log](#log-2)
+      - [4. Verify in GUI that the image was indeed pushed](#4-verify-in-gui-that-the-image-was-indeed-pushed)
+      - [5. Deleting the Docker Hub credentials from the ~/.docker/config.json](#5-deleting-the-docker-hub-credentials-from-the---docker-configjson)
+        * [Log](#log-3)
+    + [Multi-stage Build](#multi-stage-build)
+      - [Stage 1 - Building the application](#stage-1---building-the-application)
+      - [Stage 2 - Running the application](#stage-2---running-the-application)
+      - [After building the image we check the size again](#after-building-the-image-we-check-the-size-again)
+    + [Implementing the healthcheck in docker-compose](#implementing-the-healthcheck-in-docker-compose)
+      - [Adding a healthcheck to docker-compose.yml](#adding-a-healthcheck-to-docker-composeyml)
+        * [Verification](#verification)
+
+
 ### Difference between RUN and CMD
 `RUN` is a command we run to create a layer in the image / `CMD` is a command that the container is going to run when it starts up
 
