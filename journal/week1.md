@@ -242,6 +242,7 @@ Removing login credentials for https://index.docker.io/v1/
 ```
 
 ### Multi-stage Build
+[link to commit](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/cc2c12d4fa25291085fb2e362074efefadd17932)
 MSB has the potential of making our container images smaller.
 To determine whether that is the case let's check the size of our non-multi-stage container:
 
