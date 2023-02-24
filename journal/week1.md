@@ -100,7 +100,7 @@ psql -h localhost -U postgres
 
 ## Homework Challenges
 ### Run the Dockerfile CMD as an external script
-1. Created run_flask.sh
+1. Created `run_flask.sh`
 ```bash
 #!/bin/bash
 python3 -m flash run --host=0.0.0.0 --port=4567
@@ -113,6 +113,8 @@ docker build -t backend-flask ./backend-flask
 ```sh
 docker run -d --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask
 ```
+[Link to commit](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/e9415e20dbbf2b2936f077f3f2cf81f749a45c52)
+
 #### Log
 ```sh
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker build -t backend-flask ./backend-flask
