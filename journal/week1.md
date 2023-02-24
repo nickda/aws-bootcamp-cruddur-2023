@@ -18,8 +18,8 @@ cd ..
 ```
 
 - port unlocked
-- successfully opene port 4567
-- got back json
+- successfully opened port 4567
+- got back JSON response
 
 
 ### Docker Config
@@ -43,6 +43,7 @@ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-
 Tried returning the container id into an Env Var
 ```sh
 CONTAINER_ID=$(docker run --rm -p 4567:4567 -d backend-flask)
+env | grep CONTAINER
 ```
 
 ### Get Container Images or Running Container Ids
@@ -79,10 +80,23 @@ docker-compose up
 ## Updating the OpenAPI definitions
 [Link to commit d4185e0](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/d4185e0b70f4d481882dfc95f79995550d8684b2)
 
-##Updating the backend and frontend code to add notifications functionality
+## Updating the backend and frontend code to add notifications functionality
 [Link to commit db7fc6f](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/db7fc6fd36ac70e7ea80d77403598c675e0e02aa)
 
 
 ## DynamoDB Local and PostgreSQL
 
 Modifying docker-compose to include databases: [Link to commit a3e9641](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/a3e964144996e84ed031a65bc65df63a19f25573)
+
+Used the "Other Explorer" installed in VSC to connect to Postgres:
+![CleanShot 2023-02-24 at 08 50 14](https://user-images.githubusercontent.com/10653195/221122516-48edec2c-30d5-4e6a-b951-93cedf675493.png)
+
+Can see the standard tables:
+![CleanShot 2023-02-24 at 08 52 29](https://user-images.githubusercontent.com/10653195/221122842-8f5c152e-1141-48e8-9579-64c00f5a9a40.png)
+
+Tried connecting via CLI client:
+```sh
+sudo apt-get install -y postgresql-client
+psql -h localhost -U postgres
+```
+![CleanShot 2023-02-24 at 08 56 13](https://user-images.githubusercontent.com/10653195/221123666-ed275f05-c672-46ec-bed2-5b3885717449.png)
