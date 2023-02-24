@@ -116,6 +116,7 @@ docker run -d --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backe
 #### Log
 ```sh
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker build -t backend-flask ./backend-flask
+
 Sending build context to Docker daemon  60.93kB
 Step 1/10 : FROM python:3.10-slim-buster
  ---> b5d627f77479
@@ -164,9 +165,12 @@ Press CTRL+C to quit
 'FLASK_ENV' is deprecated and will not be used in Flask 2.3. Use 'FLASK_DEBUG' instead.
  * Debugger is active!
  * Debugger PIN: 113-469-523
-^Cgitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker run -d --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask
+
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker run -d --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask
 66c58f329e6f0f7f85ee5ce7939b38f940d7b5b263461296173fcd38bb4fe4cf
+
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl https://4567-nickda-awsbootcampcrudd-su9p9lpj1ju.ws-eu87.gitpod.io/api/activities/home
+
 [
   {
     "created_at": "2023-02-22T09:32:27.981983+00:00",
