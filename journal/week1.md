@@ -21,8 +21,7 @@ cd ..
 
 
 ### Docker Config
-- Added Dockerfiles for backend and frontent and docker-compose.yml
-[Link to commit 4771c99](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/4771c996b8aea77c5244c0025e5b0f41fa519357?diff=split)
+- Added Dockerfiles for backend and frontent and docker-compose.yml: [Link to commit 4771c99](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/4771c996b8aea77c5244c0025e5b0f41fa519357?diff=split)
 
 ### Tried building the container
 
