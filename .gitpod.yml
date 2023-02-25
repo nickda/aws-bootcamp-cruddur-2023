@@ -10,7 +10,9 @@ tasks:
       cd $THEIA_WORKSPACE_ROOT/frontend-react-js
       npm install
       cd $THEIA_WORKSPACE_ROOT
+      brew install hadolint
 vscode:
   extensions:
     - 42Crunch.vscode-openapi
     - cweijan.vscode-postgresql-client2
+    - exiasr.hadolint
