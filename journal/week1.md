@@ -357,6 +357,341 @@ Also, the exclamation mark appears in the Docker extension for VSC:
 
 ![CleanShot 2023-02-24 at 13 44 26](https://user-images.githubusercontent.com/10653195/221182061-069ceb84-950f-4a07-9369-de1ac91c31f8.png)
 
+### Docker Best Practices
+
+[x] Multi-stage build
+[x] Put layers that are likely to change as low as possible in the Dockerfile
+[x] Combined `RUN apt-get update` and `RUN apt-get install` thus creating a single layer which reduces the image file. Furthermore, added `--no-install-recommends` to avoid installing recommended packages and pinned the versions of the packages which I'm installing.
+before:
+```dockerfile
+RUN apt-get update 
+RUN apt-get install -y gcc
+RUN apt-get install -y curl
+```
+
+after:
+```dockerfile
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc=9.3.0 \
+    curl=7.68.0 \
+    && rm -rf /var/lib/apt/lists/*
+```
+>RUN, COPY, and ADD add size to the image. Combine them where possible
+>With multi-stage builds, don't worry too much about overly optimizing the commands in temp stages.
+[x] Added --no-cache-dir to pip command to not use the pip cache directory. This can save disk space.
+[x] Installed hadolint and hadolint extension for VScode to lint the Dockerfile code. Also added the extension and installation to .gitpod.yml
+
+### Install and run the code on the local machine
+#### Installed Docker on MacOS
+![CleanShot 2023-02-25 at 09 51 38](https://user-images.githubusercontent.com/10653195/221348160-d92bde3d-2b96-428d-849d-de6c98ed284a.png)
+#### Cloned the cruddur repo locally and created a branch to avoid impacting gitpod runs
+![CleanShot 2023-02-25 at 09 54 04](https://user-images.githubusercontent.com/10653195/221348251-4617e645-d39f-4895-83cc-a685b13dc554.png)
+#### Installed NPM
+```sh
+brew install npm
+cd frontend-react-js
+npm install
+```
+#### Changes to run locally
+The URLs for frontend and backend had to be changed to local versions to work around GitPod magic where it appends the port at the front and wraps it in TLS.
+
+```yml
+version: "3.8"
+services:
+  backend-flask:
+    environment:
+      FRONTEND_URL: "http://localhost:3000"  <-----
+      BACKEND_URL: "http://localhost:4567" <-----
+    build: ./backend-flask
+    ports:
+      - "4567:4567"
+    volumes:
+      - ./backend-flask:/backend-flask
+    healthcheck:
+      test: curl --fail http://localhost:4567/api/activities/home  <-----
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
+  frontend-react-js:
+    environment:
+      REACT_APP_BACKEND_URL: "http://localhost:4567"  <-----
+    build: ./frontend-react-js
+
+### Running on an EC2 instance
+#### Creating the instance with SSM support
+```sh
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+```
+##### Log
+```hcl
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_instance.ec2_instance will be created
+  + resource "aws_instance" "ec2_instance" {
+      + ami                                  = "ami-0ae87df03b4940655"
+      + arn                                  = (known after apply)
+      + associate_public_ip_address          = true
+      + availability_zone                    = (known after apply)
+      + cpu_core_count                       = (known after apply)
+      + cpu_threads_per_core                 = (known after apply)
+      + disable_api_stop                     = (known after apply)
+      + disable_api_termination              = (known after apply)
+      + ebs_optimized                        = (known after apply)
+      + get_password_data                    = false
+      + host_id                              = (known after apply)
+      + host_resource_group_arn              = (known after apply)
+      + iam_instance_profile                 = (known after apply)
+      + id                                   = (known after apply)
+      + instance_initiated_shutdown_behavior = (known after apply)
+      + instance_state                       = (known after apply)
+      + instance_type                        = "t3.micro"
+      + ipv6_address_count                   = (known after apply)
+      + ipv6_addresses                       = (known after apply)
+      + key_name                             = "use1.pem"
+      + monitoring                           = (known after apply)
+      + outpost_arn                          = (known after apply)
+      + password_data                        = (known after apply)
+      + placement_group                      = (known after apply)
+      + placement_partition_number           = (known after apply)
+      + primary_network_interface_id         = (known after apply)
+      + private_dns                          = (known after apply)
+      + private_ip                           = (known after apply)
+      + public_dns                           = (known after apply)
+      + public_ip                            = (known after apply)
+      + secondary_private_ips                = (known after apply)
+      + security_groups                      = (known after apply)
+      + source_dest_check                    = true
+      + subnet_id                            = "subnet-044dfba335b22ce90"
+      + tags                                 = {
+          + "Name" = "Docker test"
+        }
+      + tags_all                             = {
+          + "Name" = "Docker test"
+        }
+      + tenancy                              = (known after apply)
+      + user_data                            = (known after apply)
+      + user_data_base64                     = (known after apply)
+      + user_data_replace_on_change          = false
+      + vpc_security_group_ids               = (known after apply)
+
+      + capacity_reservation_specification {
+          + capacity_reservation_preference = (known after apply)
+
+          + capacity_reservation_target {
+              + capacity_reservation_id                 = (known after apply)
+              + capacity_reservation_resource_group_arn = (known after apply)
+            }
+        }
+
+      + ebs_block_device {
+          + delete_on_termination = (known after apply)
+          + device_name           = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + snapshot_id           = (known after apply)
+          + tags                  = (known after apply)
+          + throughput            = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+
+      + enclave_options {
+          + enabled = (known after apply)
+        }
+
+      + ephemeral_block_device {
+          + device_name  = (known after apply)
+          + no_device    = (known after apply)
+          + virtual_name = (known after apply)
+        }
+
+      + maintenance_options {
+          + auto_recovery = (known after apply)
+        }
+
+      + metadata_options {
+          + http_endpoint               = (known after apply)
+          + http_put_response_hop_limit = (known after apply)
+          + http_tokens                 = (known after apply)
+          + instance_metadata_tags      = (known after apply)
+        }
+
+      + network_interface {
+          + delete_on_termination = (known after apply)
+          + device_index          = (known after apply)
+          + network_card_index    = (known after apply)
+          + network_interface_id  = (known after apply)
+        }
+
+      + private_dns_name_options {
+          + enable_resource_name_dns_a_record    = (known after apply)
+          + enable_resource_name_dns_aaaa_record = (known after apply)
+          + hostname_type                        = (known after apply)
+        }
+
+      + root_block_device {
+          + delete_on_termination = (known after apply)
+          + device_name           = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + tags                  = (known after apply)
+          + throughput            = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+    }
+
+  # module.ssm_instance_profile.aws_iam_instance_profile.this will be created
+  + resource "aws_iam_instance_profile" "this" {
+      + arn         = (known after apply)
+      + create_date = (known after apply)
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + path        = "/"
+      + role        = (known after apply)
+      + tags_all    = (known after apply)
+      + unique_id   = (known after apply)
+    }
+
+  # module.ssm_instance_profile.aws_iam_role.this will be created
+  + resource "aws_iam_role" "this" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = {
+                  + Action    = "sts:AssumeRole"
+                  + Effect    = "Allow"
+                  + Principal = {
+                      + Service = "ec2.amazonaws.com"
+                    }
+                }
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = (known after apply)
+      + unique_id             = (known after apply)
+
+      + inline_policy {
+          + name   = (known after apply)
+          + policy = (known after apply)
+        }
+    }
+
+  # module.ssm_instance_profile.aws_iam_role_policy_attachment.this will be created
+  + resource "aws_iam_role_policy_attachment" "this" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      + role       = (known after apply)
+    }
+
+  # module.ssm_instance_profile.random_string.this[0] will be created
+  + resource "random_string" "this" {
+      + id          = (known after apply)
+      + length      = 3
+      + lower       = true
+      + min_lower   = 0
+      + min_numeric = 0
+      + min_special = 0
+      + min_upper   = 0
+      + number      = true
+      + numeric     = true
+      + result      = (known after apply)
+      + special     = false
+      + upper       = false
+    }
+
+Plan: 5 to add, 0 to change, 0 to destroy.
+
+#### Terraform Apply
+```sh
+terraform apply
+```
+##### Log
+```hcl
+module.ssm_instance_profile.random_string.this[0]: Creating...
+module.ssm_instance_profile.random_string.this[0]: Creation complete after 0s [id=zri]
+module.ssm_instance_profile.aws_iam_role.this: Creating...
+module.ssm_instance_profile.aws_iam_role.this: Creation complete after 1s [id=ssm-role-zri]
+module.ssm_instance_profile.aws_iam_role_policy_attachment.this: Creating...
+module.ssm_instance_profile.aws_iam_instance_profile.this: Creating...
+module.ssm_instance_profile.aws_iam_role_policy_attachment.this: Creation complete after 0s [id=ssm-role-zri-20230225094729817500000001]
+module.ssm_instance_profile.aws_iam_instance_profile.this: Creation complete after 0s [id=ssm-instance-profile-zri]
+aws_instance.ec2_instance: Creating...
+aws_instance.ec2_instance: Still creating... [10s elapsed]
+aws_instance.ec2_instance: Still creating... [20s elapsed]
+aws_instance.ec2_instance: Still creating... [30s elapsed]
+aws_instance.ec2_instance: Still creating... [40s elapsed]
+aws_instance.ec2_instance: Still creating... [50s elapsed]
+aws_instance.ec2_instance: Creation complete after 55s [id=i-095a34a4377d993f0]
+
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
+```
+
+#### Instance in the Console
+![CleanShot 2023-02-25 at 10 50 21](https://user-images.githubusercontent.com/10653195/221350628-7c4bcb15-141b-4343-bcfd-22a040a59cf5.png)
+
+#### SSM Access to the Instance
+![CleanShot 2023-02-25 at 10 52 44](https://user-images.githubusercontent.com/10653195/221350701-2e6372ef-3a75-40f0-acba-894f52c5c364.png)
+
+#### Cloning the repo and installing docker
+```sh
+sudo snap install docker
+```
+
+#### Tagging and pushing the latest version of container
+```sh
+docker login
+docker tag aws-bootcamp-cruddur-2023-backend-flask nickda/cruddur-backend-flask:2.0
+docker push nickda/cruddur-backend-flask:2.0
+```
+
+#### Pulling and running on an EC2 instance
+```sh
+docker pull nickda/cruddur-backend-flask:2.0
+```
+![CleanShot 2023-02-25 at 11 04 47](https://user-images.githubusercontent.com/10653195/221351190-da5adceb-4317-4389-9f2d-ba14907d38a0.png)
+```sh
+docker run --rm -p 4567:4567 -d nickda/cruddur-backend-flask:2.0
+```
+The docker cannot run the image because it was built on M1 Mac:
+![CleanShot 2023-02-25 at 11 12 00](https://user-images.githubusercontent.com/10653195/221351467-a058faf0-916f-4e9e-843f-848aa3edec18.png)
+
+**Solution**: rebuilding the image on GitPod:
+
+```sh
+docker login
+docker tag aws-bootcamp-cruddur-2023-backend-flask nickda/cruddur-backend-flask:2.1
+docker push nickda/cruddur-backend-flask:2.1
+```
+
+![CleanShot 2023-02-25 at 11 18 18](https://user-images.githubusercontent.com/10653195/221351659-d4038c36-4108-4a9c-b209-aa89b42b7665.png)
+
+
+
+
+
+
+
 
 
 
