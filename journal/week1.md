@@ -11,7 +11,10 @@
     + [Pushing and tagging image to Docker Hub](#pushing-and-tagging-image-to-docker-hub)
     + [Multi-stage Build](#multi-stage-build)
     + [Implementing the healthcheck in docker-compose](#implementing-the-healthcheck-in-docker-compose)
-  
+    + [Docker Best Practices](#docker-best-practices)
+    + [Install and run the code on the local machine](#install-and-run-the-code-on-the-local-machine)
+    + [Running on an EC2 instance](#running-on-an-ec2-instance)
+
 
 ### Difference between RUN and CMD
 `RUN` is a command we run to create a layer in the image / `CMD` is a command that the container is going to run when it starts up
@@ -418,8 +421,10 @@ services:
     environment:
       REACT_APP_BACKEND_URL: "http://localhost:4567"  <-----
     build: ./frontend-react-js
+```
 
 ### Running on an EC2 instance
+
 #### Creating the instance with SSM support
 ```sh
 terraform init
