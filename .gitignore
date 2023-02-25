@@ -1,1 +1,4 @@
 docker/dynamodb/*
+.terraform*
+*.tfstate
+*.tfstate.*
