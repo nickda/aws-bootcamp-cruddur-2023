@@ -426,6 +426,9 @@ services:
 ### Running on an EC2 instance
 
 #### Creating the instance with SSM support
+Using Terraform for this
+[link to commit](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/69f65a8b3e20f846f1b9d9fe27ef5115ba98cc6d)
+
 ```sh
 terraform init
 terraform fmt
