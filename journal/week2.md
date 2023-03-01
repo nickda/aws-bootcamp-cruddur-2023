@@ -17,6 +17,8 @@ gp env HONEYCOMB_API_KEY="REDACTED"
 ```
 
 ### Edit docker-compose.yml to add OpenTelemetry variables for the backend-flask service
+[commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/4352fdb96f8c0dcc5d3bcef62b5fc8ee6e17ba4b)
+
 >The HONEYCOMB_SERVICE_NAME should not be set globally. It should be set per service.
 
 ```yml
@@ -44,8 +46,16 @@ pip install opentelemetry-api \
     opentelemetry-instrumentation-requests
 ```
 >These commands can be accessed if you click on the "Home" button in Honeycomb UI
+
 #### Save the modules into requirements.txt
 ```sh
 pip freeze >> requirements.txt
 ```
+
+### Add instrumentation lines to app.py
+[commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/a9d4da62712164170d4ee43251401bef10e13da8)
+Ensure that initialize automatic instrumentation instructions go after the `app = Flask(__name__)`
+
+
+
 
