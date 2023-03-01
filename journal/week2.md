@@ -1,19 +1,4 @@
 # Week 2 — Distributed Tracing
-## Adding ports in .gitpod.yml
-To avoid manually opening ports every time, added ports to .gitpod.yml
-```yml
-ports:
-  - name: frontend
-    port: 3000
-    onOpen: open-browser
-    visibility: public
-  - name: backend
-    port: 4567
-    visibility: public
-  - name: xray-daemon
-    port: 2000
-    visibility: public
-```
 
 ## Honeycomb setup and instrumenting the code
 ### Create environment called bootcamp-dev
@@ -145,7 +130,21 @@ HEATMAP for 90th percentile of duration:
 ![CleanShot 2023-03-01 at 19 37 02](https://user-images.githubusercontent.com/10653195/222233813-38bddc6d-1938-4302-8a13-6835f2aa1b87.png)
 
 
-
+## Adding ports in .gitpod.yml
+To avoid manually opening ports every time, added ports to .gitpod.yml
+```yml
+ports:
+  - name: frontend
+    port: 3000
+    onOpen: open-browser
+    visibility: public
+  - name: backend
+    port: 4567
+    visibility: public
+  - name: xray-daemon
+    port: 2000
+    visibility: public
+```
     
 
 
