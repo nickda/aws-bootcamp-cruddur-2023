@@ -17,8 +17,8 @@ COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc=9.3.0 \
-    curl=7.68.0 \
+    gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY run_flask.sh /usr/local/bin/
