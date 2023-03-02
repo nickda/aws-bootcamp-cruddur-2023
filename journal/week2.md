@@ -232,7 +232,77 @@ services:
 Traces received by X-Ray:
 ![CleanShot 2023-03-02 at 14 50 09](https://user-images.githubusercontent.com/10653195/222447057-1f6f0186-f952-47c2-bb9e-323867147a21.png)
 
+## CloudWatch Logs
+We will use log handler for CloudWatch logs, called [watchtower](https://pypi.org/project/watchtower/)
 
+### Installing watchtower
+```sh 
+pip install watchtower
+pip freeze >> backend-flask/requirements.txt
+```
+
+### Changes in app.py
+
+#### Import the libraries
+```py
+import watchtower
+import logging
+from time import strftime
+```
+
+#### Set up the logger
+```py
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
+console_handler = logging.StreamHandler()
+cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+LOGGER.addHandler(console_handler)
+LOGGER.addHandler(cw_handler)
+LOGGER.info("some message")
+```
+
+#### After request decorator
+```py
+@app.after_request
+def after_request(response):
+    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+    return response
+ ```
+ 
+ #### Pass the LOGGER variable into HomeActivities class
+ ```py
+@app.route("/api/activities/home", methods=['GET'])
+def data_home():
+  data = HomeActivities.run(LOGGER) <-----<<-
+  return data, 200
+  ```
+ 
+### Changes in home_activities.py
+#### Import the libraries
+```py
+ import logging
+```
+
+#### Inject a logger in the "run()" function
+```py
+  def run(LOGGER):
+    LOGGER.info("HomeActivities")
+```
+
+### Adding environment variables in docker-compose.yml
+```yml
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+```
+
+### Verifying that it works
+![CleanShot 2023-03-02 at 15 43 17](https://user-images.githubusercontent.com/10653195/222460701-73612c80-5ba4-4ca4-8cc1-fba56bc65bb9.png)
+![CleanShot 2023-03-02 at 15 43 28](https://user-images.githubusercontent.com/10653195/222460746-c03c0447-907e-4755-9ae7-46520a6fcc20.png)
+
+
+ 
 
 
 
