@@ -301,9 +301,73 @@ def data_home():
 ![CleanShot 2023-03-02 at 15 43 17](https://user-images.githubusercontent.com/10653195/222460701-73612c80-5ba4-4ca4-8cc1-fba56bc65bb9.png)
 ![CleanShot 2023-03-02 at 15 43 28](https://user-images.githubusercontent.com/10653195/222460746-c03c0447-907e-4755-9ae7-46520a6fcc20.png)
 
+## Rollbar
+### Install rollbar and blnker
+```sh
+pip install rollbar
+pip install blinker
+pip freeze >> backend-flask/requirements.txt
+```
 
- 
+### Export rollbar access token
+export ROLLBAR_ACCESS_TOKEN="REDACTED"
+gp env ROLLBAR_ACCESS_TOKEN="REDACTED"
 
+### Add envvar to docker-compose.yml
+```yml
+ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
+```
+
+### Update app.py
+#### Import Libraries
+```py
+from time import strftime
+import os
+import rollbar
+import rollbar.contrib.flask
+from flask import got_request_exception
+```
+
+#### Initialize rollbar
+```py
+rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+@app.before_first_request
+def init_rollbar():
+    """init rollbar module"""
+    rollbar.init(
+        # access token
+        rollbar_access_token,
+        # environment name
+        'production',
+        # server root directory, makes tracebacks prettier
+        root=os.path.dirname(os.path.realpath(__file__)),
+        # flask already sets up logging
+        allow_logging_basic_config=False)
+
+    # send exceptions from `app` to rollbar, using flask's signal system.
+    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+```
+#### Add endpoint for testing
+```py
+@app.route('/rollbar/test')
+def rollbar_test():
+    rollbar.report_message('Hello World!', 'warning')
+    return "Hello World!"
+```
+
+### Verification
+Test by visiting `https://4567-<gitpod url>/rollbar/test`
+![CleanShot 2023-03-02 at 16 06 25](https://user-images.githubusercontent.com/10653195/222467073-b58cde6b-e24c-4f62-acbf-4ec24a3c1a27.png)
+
+>Had to restart GitPod workspace to start sending the data. Problem with envvar being seen inside the container.
+
+![CleanShot 2023-03-02 at 16 15 56](https://user-images.githubusercontent.com/10653195/222469662-2ecf802f-cdb0-4c40-855a-f883f58c7969.png)
+
+#### Triggering a bug
+1. In `home_activities.py` remove `return` from `return results`
+2. Browse to `/api/activities/home`
+3. Check Rollbar
+![CleanShot 2023-03-02 at 16 19 14](https://user-images.githubusercontent.com/10653195/222470561-4324fe98-fa5f-4816-a67e-0b6e295b81ea.png)
 
 
 
