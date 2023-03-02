@@ -145,7 +145,96 @@ ports:
     port: 2000
     visibility: public
 ```
-    
+
+## Instrument X-Ray
+### Install X-Ray SDK
+```sh
+pip install aws-xray-sdk
+pip freeze >> backend-flask/requirements.txt
+```
+### Instrument the Flask backend
+[Guide to instrumenting flask](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-python-middleware.html)
+```py
+## X-Ray
+# Import the SDK
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+
+# <existing app = Flask(__name__) statement
+
+## X-Ray
+# Initialize
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+XRayMiddleware(app, xray_recorder)
+```
+### Add a group and a sampling rule for X-Ray
+#### JSON file for the sampling rule code
+in `/aws/json/xray.json`:
+```json
+{
+  "SamplingRule": {
+      "RuleName": "Cruddur",
+      "ResourceARN": "*",
+      "Priority": 9000,
+      "FixedRate": 0.1,
+      "ReservoirSize": 5,
+      "ServiceName": "backend-flask",
+      "ServiceType": "*",
+      "Host": "*",
+      "HTTPMethod": "*",
+      "URLPath": "*",
+      "Version": 1
+  }
+}
+```
+#### Create group
+```sh
+FLASK_ADDRESS="https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
+
+aws xray create-group \
+   --group-name "Cruddur" \
+   --filter-expression "service(\"backend-flask\")"
+```
+Verifying that the group was created:
+![CleanShot 2023-03-02 at 14 31 52](https://user-images.githubusercontent.com/10653195/222442844-033302dd-6799-4d63-81ca-4a3a1588ba35.png)
+
+#### Create the sampling rule
+```sh
+aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json
+```
+
+### Adding X-Ray Daemon to Docker Compose
+in `docker-compose.yml`:
+```yml
+xray-daemon:
+    image: "amazon/aws-xray-daemon"
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "eu-central-1"
+    command:
+      - "xray -o -b xray-daemon:2000"
+    ports:
+      - 2000:2000/udp
+```
+#### Adding required environment variables to Docker Compose
+in `docker-compose.yml`:
+```yml
+services:
+  backend-flask:
+    environment:
+    ...
+      AWS_XRAY_URL: "*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*"
+      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
+```
+
+Traces received by X-Ray:
+![CleanShot 2023-03-02 at 14 50 09](https://user-images.githubusercontent.com/10653195/222447057-1f6f0186-f952-47c2-bb9e-323867147a21.png)
+
+
+
+
 
 
 
