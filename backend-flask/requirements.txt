@@ -14,3 +14,6 @@ opentelemetry-sdk==1.16.0
 opentelemetry-semantic-conventions==0.37b0
 opentelemetry-util-http==0.37b0
 protobuf==4.22.0
+aws-xray-sdk==2.11.0
+botocore==1.29.82
+jmespath==1.0.1
