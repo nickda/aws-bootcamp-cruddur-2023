@@ -370,6 +370,23 @@ Test by visiting `https://4567-<gitpod url>/rollbar/test`
 ![CleanShot 2023-03-02 at 16 19 14](https://user-images.githubusercontent.com/10653195/222470561-4324fe98-fa5f-4816-a67e-0b6e295b81ea.png)
 
 
+# Homework Challenge
+
+## Adding a custom span with a User ID
+[commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/69fd4546289545d52c2f3c6523c17b05d1feec9d)
+
+### Verification
+![CleanShot 2023-03-03 at 22 06 06](https://user-images.githubusercontent.com/10653195/222829493-d3683792-cad3-4a43-96fe-507440a9b52e.png)
 
 
+## Instrumenting the frontend
+Reference: https://docs.honeycomb.io/getting-data-in/opentelemetry/browser-js/
+### Installing the packages
+```sh
+npm install --save \
+    @opentelemetry/api \
+    @opentelemetry/sdk-trace-web \
+    @opentelemetry/exporter-trace-otlp-http \
+    @opentelemetry/context-zone
+```
 
