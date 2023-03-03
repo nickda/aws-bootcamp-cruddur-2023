@@ -50,5 +50,7 @@ class HomeActivities:
         'replies': []
       }
       ]
+      handle = results[0]['handle']
+      span.set_attribute("app.user_id", handle)
       span.set_attribute("app.result_length", len(results))
       return results
