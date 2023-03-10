@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
+from lib.cognito_jwt_token import CognitoJwtToken, extract_access_token, TokenVerifyError
 import os
 
 from services.home_activities import *
@@ -60,6 +61,13 @@ import rollbar.contrib.flask
 from flask import got_request_exception
 
 app = Flask(__name__)
+
+##Cognito Configuration
+cognito_jwt_token = CognitoJwtToken(
+  user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"), 
+  user_pool_client_id=os.getenv("AWS_COGNITO_USER_POOL_CLIENT_ID"), 
+  region=os.getenv("AWS_DEFAULT_REGION")
+)
 
 ## Honeycomb
 # Initialize automatic instrumentation with Flask
@@ -155,9 +163,19 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-  app.logger.info("AUTH HEADER")
-  app.logger.info(request.headers.get('Authorization'))
-  data = HomeActivities.run(LOGGER)
+  access_token = extract_access_token(request.headers)
+  try:
+    claims = cognito_jwt_token.verify(access_token)
+    # authenicatid request
+    app.logger.debug("authenicated")
+    app.logger.debug(claims)
+    app.logger.debug(claims['username'])
+    data = HomeActivities.run(cognito_user_id=claims['username'])
+  except TokenVerifyError as e:
+    # unauthenicated request
+    app.logger.debug(e)
+    app.logger.debug("unauthenicated")
+    data = HomeActivities.run(LOGGER)
   return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
