@@ -64,7 +64,7 @@ Amplify.configure({
 ##### REACT_APP_CLIENT_ID
 <img width="1078" alt="CleanShot 2023-03-10 at 09 24 41@2x" src="https://user-images.githubusercontent.com/10653195/224263027-2212065f-017a-4f03-b3d5-c410f8a503a9.png">
 
-### Configuring conditional display of components based on whether user is logged in or logged out
+## Configuring conditional display of components based on whether user is logged in or logged out
 
 [commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/24253393aeb0bcc7c18231bdf651a0242fd7bc41)
 
@@ -129,7 +129,7 @@ Problem statement: After `docker-compose up` the page on port 3000 is blank.
   - Found the incorrect variable and fixed it [commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/04096b4eb4315586511669ca3a382cc676c818a8)
 
 
-### Sign-in Page
+## Sign-in Page
 
 [commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/c3e86a2eab64f25666e7a58dd8b717b3a126f750)
 
@@ -166,7 +166,7 @@ If there is an error, the function checks if the error code is UserNotConfirmedE
 Finally, the function returns false to prevent the form from being submitted.
 
 
-### Creating a user in Cognito
+## Creating a user in Cognito
 <img width="815" alt="CleanShot 2023-03-10 at 10 23 24@2x" src="https://user-images.githubusercontent.com/10653195/224277034-00d7f39d-db22-4cba-8fcb-92a77e522846.png">
 
 Manually verifying the user
@@ -174,16 +174,16 @@ Manually verifying the user
 aws cognito-idp admin-set-user-password --user-pool-id "us-east-1_EsWorbtLo" --username nickda --password REDACTED --permanent
 ```
 
-### Adding Console Logging for the Sign-In page
+## Adding Console Logging for the Sign-In page
 [commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/280c1cc516c1abb58a564e357e4e2fd0ce1cd0ec)
 
-### Adding Optional Attributes in Cognito
+## Adding Optional Attributes in Cognito
 ![CleanShot 2023-03-10 at 10 47 29@2x](https://user-images.githubusercontent.com/10653195/224283395-41e1adbc-797f-484f-9432-5d967895ebef.png)
 
-#### Verification
+### Verification
 ![CleanShot 2023-03-10 at 10 46 56](https://user-images.githubusercontent.com/10653195/224283310-89599a54-a513-4a29-b0ce-ae9ee284ef36.png)
 
-### Sign up Page
+## Sign up Page
 [commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/ba88da05c758255331bf35fc650c44fcfb29315e)
 `SignupPage.js`
 
@@ -230,7 +230,7 @@ If there is an error, the function logs the error message to the console and set
 
 Finally, the function returns false to prevent the form from being submitted.
 
-### Confirmation Page
+## Confirmation Page
 
 [commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/ba88da05c758255331bf35fc650c44fcfb29315e)
 
@@ -285,7 +285,7 @@ If there is an error, the function calls the setErrors() function to set the err
 
 Finally, the function returns false to prevent the form from being submitted.
 
-### Password Recovery Page
+## Password Recovery Page
 
 [commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/2258f288c83ce379e2ba681c2cf145e6c8ef8de5)
 
@@ -341,3 +341,86 @@ If there is an error, the function sets the error message in the state variable 
 If the two password values do not match, the function sets the error message to indicate that the passwords do not match.
 
 Finally, the function returns false to prevent the form from being submitted.
+
+## Passing the JWT token along to the backend
+When configuring authentication for storage we have added the following line to `SigninPage.js`:
+```js
+localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
+```
+The `localStorage` is a client-side web API that allows developers to store key-value pairs in the browser's storage space. These key-value pairs can be retrieved and used later by the same web application in subsequent user sessions.
+
+In this line of code, the key is set as "access_token", and the value is the `jwtToken` property of the `accessToken` object in the `signInUserSession` object of the `user` object. This token is typically used to authenticate API requests to an AWS backend using the AWS Amplify library. By storing this token in the local storage, it can be easily retrieved and used across different pages of the web application.
+
+We will be passing this token along with our API calls.
+
+
+### Updating the Backend
+
+[commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/a5a47d8fa4df1ef9330d02ce5a5a1c3c789a8b5e)
+
+To pass the JWT to backend, in `HomeFeedPage.js` we are updating the `const res` with Authorization header:
+```js
+const res = await fetch(backend_url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        },
+```
+
+In `app.py`:
+
+- Adding CORS config
+```py
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+
+- Adding the header read to the flask backend:
+
+```py
+@app.route("/api/activities/home", methods=['GET'])
+def data_home():
+  app.logger.info("AUTH HEADER")
+  app.logger.info(request.headers.get('Authorization'))
+  data = HomeActivities.run(LOGGER)
+  return data, 200
+```
+
+#### Verification
+
+![CleanShot 2023-03-10 at 13 42 48](https://user-images.githubusercontent.com/10653195/224319058-5259bc11-51f2-453e-8fda-7151ddc07413.png)
+
+### Token Validation
+[commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/8413adf8e928f06c5c45e92cecabc977078b209a)
+
+#### Installing Flask-AWSCognito
+```sh
+pip install Flask-AWSCognito
+pip freeze >> requirements.txt
+```
+#### Adding EnvVars to docker compose
+ ```yml
+      AWS_COGNITO_USER_POOL_ID: "eu-central-1_XpQ38wxCd"
+      AWS_COGNITO_USER_POOL_CLIENT_ID: "15h068rbs47sospru86piq01a7"
+ ```
+
+#### Code for Cognito Token Verification
+refer to the [commit](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/8413adf8e928f06c5c45e92cecabc977078b209a#diff-c4205e0c1fabfa8932a580cf9b109f3af4c9fe9c738868a9c7f8d83212db9c24)
+
+
+#### Configuring Cognito in app.py
+refer to the [commit](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/8413adf8e928f06c5c45e92cecabc977078b209a#diff-0014cc1f7ffd53e63ff797f0f2925a994fbd6797480d9ca5bbc5dc65f1b56438)
+
+ 
+#### Updating the home_activities.py
+refer to the [commit](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/8413adf8e928f06c5c45e92cecabc977078b209a#diff-e7fc4f0f2b4e4510d81bbc953fe4e4198587359967fc005d49cb23f39e7f3130) 
+
+## Updating the colour palette
+[commit link](https://github.com/nickda/aws-bootcamp-cruddur-2023/commit/6763a2afa095bb863b0119516d6906d6398688f0)
+
+
+ 
