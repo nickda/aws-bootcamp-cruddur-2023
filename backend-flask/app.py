@@ -79,10 +79,11 @@ origins = [frontend, backend]
 cors = CORS(
   app, 
   resources={r"/api/*": {"origins": origins}},
-  expose_headers="location,link",
-  allow_headers="content-type,if-modified-since",
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
   methods="OPTIONS,GET,HEAD,POST"
 )
+
 
 ## CloudWatch Logs
 @app.after_request
@@ -154,6 +155,8 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
+  app.logger.info("AUTH HEADER")
+  app.logger.info(request.headers.get('Authorization'))
   data = HomeActivities.run(LOGGER)
   return data, 200
 
